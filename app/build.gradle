@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
-}
+    id 'com.chaquo.python'
+    }
+
 
 android {
     compileSdkVersion 30
@@ -12,6 +14,21 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+
+        sourceSets {
+            main {
+                python {
+                    srcDirs = ["src/main/python"]
+                }
+            }
+        }
+        python {
+            buildPython "/Users/caramurphy/anaconda3/bin/python"
+            buildPython "python3"
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
