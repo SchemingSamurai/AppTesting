@@ -9,16 +9,17 @@
 
     <Button
         android:id="@+id/beginBtn"
-        android:layout_width="340sp"
-        android:layout_height="408sp"
+        android:layout_width="370dp"
+        android:layout_height="300dp"
         android:onClick="BeginButton"
         android:text="@string/beginTxt"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.393" />
+        app:layout_constraintVertical_bias="0.245" />
 
     <TextView
         android:id="@+id/saidTxt"
@@ -34,13 +35,14 @@
 
     <Button
         android:id="@+id/stopBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginLeft="33dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="370dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
         android:onClick="StopButton"
         android:text="@string/stopTxt"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/beginBtn" />
 
@@ -48,11 +50,27 @@
         android:id="@+id/dateScript"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
         android:text="Today's Date"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.577"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/stopBtn" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginBottom="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/beginBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/beginBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        tools:srcCompat="@tools:sample/avatars"
+        android:src="@drawable/ybphoto"/>/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

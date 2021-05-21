@@ -5,13 +5,17 @@ import androidx.core.app.ActivityCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View.OnClickListener;
@@ -20,6 +24,7 @@ import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import static android.Manifest.permission.RECORD_AUDIO;
 
@@ -28,111 +33,69 @@ public class MainActivity extends AppCompatActivity {
     private SpeechRecognizer speechRecognizer;
     private Intent intentRecognizer;
     private TextView spokenText;
-    TextView dateText;
+    TextView dateScript;
+    Button begin;
+    ImageView iv;
+
+    BitmapDrawable drawable;
+    Bitmap bitmap;
+
+    String imageString="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        begin=(Button)findViewById(R.id.beginBtn);
+        iv=(ImageView)findViewById(R.id.image_view);
+
+
         //Run Python Script
-        dateText = findViewById(R.id.dateScript);
+        dateScript = findViewById(R.id.dateScript);
 
         if (! Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
         }
 
         //create python instance
-        Python py =Python.getInstance();
-        //create python object
-        PyObject pyObj = py.getModule("sample");
+        final Python py =Python.getInstance();
 
-        //call function
-        PyObject obj = pyObj.callAttr("main");
-
-        //set returned text to textView
-        dateText.setText(obj.toString());
-
-
-
-        //Voice Commands
-        //ask device for permissions
-        ActivityCompat.requestPermissions(this, new String[]{RECORD_AUDIO}, PackageManager.PERMISSION_GRANTED);
-
-        spokenText = findViewById(R.id.saidTxt);
-        intentRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intentRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-
-
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+        begin.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onReadyForSpeech(Bundle params) {
+            public void onClick(View v){
+                drawable=(BitmapDrawable)iv.getDrawable();
+                bitmap=drawable.getBitmap();
+                imageString=getStringImage(bitmap);
 
-            }
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
 
-            @Override
-            public void onBeginningOfSpeech() {
+                //create python object
+                PyObject pyObj = py.getModule("sample");
 
-            }
+                //call function, pass imageString as a parameter into the script
+                PyObject obj = pyObj.callAttr("isColorChange",byteArray);
 
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int error) {
-
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-                ArrayList<String> matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                String string = "";
-                if (matches != null) {
-                    string = matches.get(0);
-                    spokenText.setText(string);
-                }
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
+                //set returned text to textView
+                dateScript.setText(obj.toString());
             }
         });
+
     }
 
+    private String getStringImage(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos); //change quality?
 
-    public void BeginButton(View view){
-                speechRecognizer.startListening(intentRecognizer);
-                Toast toast = Toast.makeText(getApplicationContext(), "Clicked Begin", Toast.LENGTH_LONG);
-                toast.show();
-            }
+        //store in byte array
+        byte[] imageBytes = baos.toByteArray();
+        //encode to string
+        String encodedImage = android.util.Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
 
-
-
-    public void StopButton(View view){
-                speechRecognizer.stopListening();
-                Toast toast = Toast.makeText(getApplicationContext(), "Clicked Stop", Toast.LENGTH_LONG);
-                toast.show();
-            }
 
 
 
